@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/marcoalbarelli/symfony2notes.png?label=ready&title=Ready)](https://waffle.io/marcoalbarelli/symfony2notes)
 symfony2notes
 =============
 
