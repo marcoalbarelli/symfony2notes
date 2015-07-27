@@ -46,3 +46,15 @@ assetic:
 
 #swiftmailer:
 #    delivery_address: me@example.com
+
+security:
+    providers:
+        in_memory_provider:
+            memory:
+                users:
+                    foo:
+                        password:           foo
+                        roles:              ROLE_USER
+                    bar:
+                        password:           bar
+                        roles:              [ROLE_USER, ROLE_ADMIN]

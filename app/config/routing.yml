@@ -1,3 +1,14 @@
-app:
-    resource: "@AppBundle/Controller/"
+marcoalbarelli_site:
+    resource: "@MarcoalbarelliSiteBundle/Controller/"
     type:     annotation
+    prefix:   /
+
+marcoalbarelli_api:
+    resource: "@MarcoalbarelliAPIBundle/Controller/"
+    type:     annotation
+    prefix:   /api/
+
+marcoalbarelli_admin:
+    resource: "@MarcoalbarelliAdminBundle/Controller/"
+    type:     annotation
+    prefix:   /admin/
