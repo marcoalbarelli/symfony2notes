@@ -32,7 +32,20 @@ class DefaultControllerTest extends WebTestCase
 
         $this->assertEquals(302,$this->client->getResponse()->getStatusCode());
         $this->assertcontains('login',$this->client->getResponse()->headers->get('Location'));
+    }
 
+    public function testAdminLoginRouteExists(){
+        $this->client = static::createClient();
+
+        $router =$this->client->getContainer()->get('router');
+        $route = $router->generate('admin_hello',array('name'=>"Fabien"));
+
+        $this->client->request('GET', $route);
+
+        $this->assertEquals(302,$this->client->getResponse()->getStatusCode());
+        $this->assertcontains('login',$this->client->getResponse()->headers->get('Location'));
+        $this->client->followRedirect();
+        $this->assertEquals(200,$this->client->getResponse()->getStatusCode());
     }
 
     /**
@@ -79,14 +92,14 @@ class DefaultControllerTest extends WebTestCase
     }
 
     private function loginAdmin(){
-        $this->logIn('admin','ROLE_ADMIN');
+        $this->logInViaUsernamePasswordToken('admin','ROLE_ADMIN');
     }
 
     private function loginUser(){
-        $this->logIn('user','ROLE_USER');
+        $this->logInViaUsernamePasswordToken('user','ROLE_USER');
     }
 
-    private function logIn($username,$role)
+    private function logInViaUsernamePasswordToken($username,$role)
     {
         $session = $this->client->getContainer()->get('session');
 
