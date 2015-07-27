@@ -78,3 +78,8 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+fos_user:
+    firewall_name: admin_area
+    db_driver: orm
+    user_class: Marcoalbarelli\EntityBundle\Entity\User
