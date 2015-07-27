@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: iksadmin
- * Date: 27/07/15
- * Time: 11.45
- */
 
 namespace Marcoalbarelli\AdminBundle\Controller;
 

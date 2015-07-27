@@ -2,14 +2,17 @@ security:
     encoders:
         plain: plain
         Symfony\Component\Security\Core\User\User: plaintext
+        FOS\UserBundle\Model\UserInterface: sha512
 
     providers:
         in_memory_provider:
             memory:
                 users:
+        fos_userbundle:
+            id: fos_user.user_provider.username
         chain_provider:
             chain:
-                providers:          [ in_memory_provider ]
+                providers:          [ in_memory_provider , fos_userbundle ]
 
     firewalls:
         dev:
