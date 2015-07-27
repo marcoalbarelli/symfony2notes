@@ -5,6 +5,8 @@ security:
         FOS\UserBundle\Model\UserInterface: sha512
 
     providers:
+        mapi:
+            id: marcoalbarelli.apiuser_provider
         in_memory_provider:
             memory:
                 users:
@@ -18,8 +20,15 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt|error)|css|images|js)/
             security: false
+        api_area:
+            pattern: ^/api/
+            provider: mapi
+            entry_point: marcoalbarelli.api_user_auth_entrypoint
+            anonymous: ~
+            simple_preauth:
+                authenticator: marcoalbarelli.api_user_authenticator
         admin_area:
-            pattern: /admin/
+            pattern: ^/admin/
             security: true
             form_login:
                 check_path: /admin/login_check
@@ -33,5 +42,6 @@ security:
                 target:         /
 
     access_control:
+        - { path: ^/api/status, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/login* , roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/* , roles: ROLE_ADMIN }
