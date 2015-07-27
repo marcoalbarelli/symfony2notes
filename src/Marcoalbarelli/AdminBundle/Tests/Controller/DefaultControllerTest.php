@@ -10,6 +10,10 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 class DefaultControllerTest extends WebTestCase
 {
     const ADMIN_AREA_FIREWALL_NAME = 'admin_area';
+    const ADMIN_AREA_HARDCODED_USERNAME = 'bar';
+    const ADMIN_AREA_HARDCODED_PASSWORD = 'bar';
+    const ADMIN_AREA_HARDCODED_NORMAL_USER_USERNAME = 'foo';
+    const ADMIN_AREA_HARDCODED_NORMAL_USER_PASSWORD = 'foo';
 
     /**
      * @var $client Client
@@ -34,7 +38,7 @@ class DefaultControllerTest extends WebTestCase
         $this->assertcontains('login',$this->client->getResponse()->headers->get('Location'));
     }
 
-    public function testAdminLoginRouteExists(){
+    public function testAdminLoginFormRouteExists(){
         $this->client = static::createClient();
 
         $router =$this->client->getContainer()->get('router');
@@ -46,6 +50,63 @@ class DefaultControllerTest extends WebTestCase
         $this->assertcontains('login',$this->client->getResponse()->headers->get('Location'));
         $this->client->followRedirect();
         $this->assertEquals(200,$this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminLoginFormAllowsAdminUsersToLogin(){
+        $this->client = static::createClient();
+
+        $router =$this->client->getContainer()->get('router');
+        $route = $router->generate('admin_hello',array('name'=>"Fabien"));
+
+        $this->client->request('GET', $route);
+        $crawler = $this->client->followRedirect();
+        $this->assertEquals(200,$this->client->getResponse()->getStatusCode());
+        $form = $crawler->selectButton('login')->form();
+        $this->assertnotNull($form);
+        $values = $form->getValues();
+        $this->assertArrayHasKey('_username',$values);
+        $this->assertArrayHasKey('_password',$values);
+
+        $values['_username'] = self::ADMIN_AREA_HARDCODED_USERNAME;
+        $values['_password'] = self::ADMIN_AREA_HARDCODED_PASSWORD;
+
+        $form->setValues($values);
+        $this->client->submit($form);
+
+        //Check that we are redirected to the requested URL: This means the authentication process succeeded
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertContains($route,$this->client->getResponse()->headers->get('Location'));
+        $this->client->followRedirect();
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testAdminLoginFormRejectsNonAdminUsers(){
+        $this->client = static::createClient();
+
+        $router =$this->client->getContainer()->get('router');
+        $route = $router->generate('admin_hello',array('name'=>"Fabien"));
+
+        $this->client->request('GET', $route);
+        $crawler = $this->client->followRedirect();
+        $this->assertEquals(200,$this->client->getResponse()->getStatusCode());
+        $form = $crawler->selectButton('login')->form();
+        $this->assertnotNull($form);
+        $values = $form->getValues();
+        $this->assertArrayHasKey('_username',$values);
+        $this->assertArrayHasKey('_password',$values);
+
+        $values['_username'] = self::ADMIN_AREA_HARDCODED_NORMAL_USER_USERNAME;
+        $values['_password'] = self::ADMIN_AREA_HARDCODED_NORMAL_USER_PASSWORD;
+
+        $form->setValues($values);
+        $this->client->submit($form);
+
+        //Check that we are redirected to the requested URL.
+        //In this case the user is not an administrator so the response code must be 403
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
+        $this->assertContains($route,$this->client->getResponse()->headers->get('Location'));
+        $this->client->followRedirect();
+        $this->assertEquals(403, $this->client->getResponse()->getStatusCode());
     }
 
     /**

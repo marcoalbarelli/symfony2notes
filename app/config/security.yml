@@ -26,7 +26,7 @@ security:
                 use_referer: true
             anonymous:    true
             logout:
-                path:           /logout
+                path:           /admin/logout
                 target:         /
 
     access_control:
