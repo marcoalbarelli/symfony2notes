@@ -1,6 +1,9 @@
 services:
   marcoalbarelli.jwt_checker:
       class: Marcoalbarelli\APIBundle\Service\JWTChecker
+      arguments:
+        - "%secret%"
+        - "%jwt_algs%"
   marcoalbarelli.api_user_authenticator:
       class: Marcoalbarelli\APIBundle\Service\APIUserAuthenticator
   marcoalbarelli.api_user_provider:
