@@ -5,7 +5,7 @@ namespace Marcoalbarelli\APIBundle\Tests\Service;
 
 use Firebase\JWT\JWT;
 
-class JWTChecker extends BaseServiceTestClass
+class JWTCheckerTest extends BaseServiceTestClass
 {
 
     public function testServiceExists(){

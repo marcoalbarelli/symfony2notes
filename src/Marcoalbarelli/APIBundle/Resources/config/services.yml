@@ -10,3 +10,5 @@ services:
       class: Marcoalbarelli\APIBundle\Service\APIUserProvider
   marcoalbarelli.api_user_auth_entrypoint:
       class: Marcoalbarelli\APIBundle\Service\APIAuthEntrypoint
+      arguments:
+        - "%fos_user.firewall_name%"
