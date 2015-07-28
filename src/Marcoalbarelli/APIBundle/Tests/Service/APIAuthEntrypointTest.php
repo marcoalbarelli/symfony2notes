@@ -4,11 +4,12 @@
 namespace Marcoalbarelli\APIBundle\Tests\Service;
 
 
+use Marcoalbarelli\APIBundle\Tests\BaseTestClass;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
-class APIAuthEntrypointTest extends BaseServiceTestClass
+class APIAuthEntrypointTest extends BaseTestClass
 {
     public function testServiceExists(){
         $this->container->get('marcoalbarelli.api_user_auth_entrypoint');

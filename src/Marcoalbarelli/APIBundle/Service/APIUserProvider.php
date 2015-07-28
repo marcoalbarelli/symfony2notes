@@ -12,13 +12,11 @@ class APIUserProvider implements UserProviderInterface
     public function loadUserByUsername($username)
     {
         // TODO: Implement loadUserByUsername() method.
-        $a= 2;
     }
 
     public function refreshUser(UserInterface $user)
     {
         // TODO: Implement refreshUser() method.
-        $a= 2;
         return $user;
     }
 

@@ -15,6 +15,9 @@ security:
         chain_provider:
             chain:
                 providers:          [ in_memory_provider , fos_userbundle ]
+        api_chain_provider:
+            chain:
+                providers:          [ in_memory_provider , mapi ]
 
     firewalls:
         dev:
@@ -22,7 +25,7 @@ security:
             security: false
         api_area:
             pattern: ^/api/
-            provider: mapi
+            provider: api_chain_provider
             stateless: true
             entry_point: marcoalbarelli.api_user_auth_entrypoint
             anonymous: ~

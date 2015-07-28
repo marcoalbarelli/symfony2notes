@@ -4,7 +4,9 @@
 namespace Marcoalbarelli\APIBundle\Tests\Service;
 
 
-class APIUserProviderTest extends BaseServiceTestClass
+use Marcoalbarelli\APIBundle\Tests\BaseTestClass;
+
+class APIUserProviderTest extends BaseTestClass
 {
     public function testServiceExists(){
         $this->container->get('marcoalbarelli.api_user_provider');
