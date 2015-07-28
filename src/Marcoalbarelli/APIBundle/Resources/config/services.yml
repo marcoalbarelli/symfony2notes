@@ -1,1 +1,9 @@
 services:
+  marcoalbarelli.jwt_checker:
+      class: Marcoalbarelli\APIBundle\Service\JWTChecker
+  marcoalbarelli.api_user_authenticator:
+      class: Marcoalbarelli\APIBundle\Service\APIUserAuthenticator
+  marcoalbarelli.api_user_provider:
+      class: Marcoalbarelli\APIBundle\Service\APIUserProvider
+  marcoalbarelli.api_user_auth_entrypoint:
+      class: Marcoalbarelli\APIBundle\Service\APIAuthEntrypoint

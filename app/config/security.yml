@@ -6,7 +6,7 @@ security:
 
     providers:
         mapi:
-            id: marcoalbarelli.apiuser_provider
+            id: marcoalbarelli.api_user_provider
         in_memory_provider:
             memory:
                 users:
@@ -23,6 +23,7 @@ security:
         api_area:
             pattern: ^/api/
             provider: mapi
+            stateless: true
             entry_point: marcoalbarelli.api_user_auth_entrypoint
             anonymous: ~
             simple_preauth:
