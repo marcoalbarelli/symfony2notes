@@ -3,6 +3,7 @@
 
 namespace Marcoalbarelli\APIBundle\Tests\Service;
 
+use Exception;
 use Marcoalbarelli\APIBundle\Tests\BaseTestClass;
 
 class JWTCheckerTest extends BaseTestClass
@@ -12,13 +13,28 @@ class JWTCheckerTest extends BaseTestClass
         $this->container->get('marcoalbarelli.jwt_checker');
     }
 
-    public function testServiceAcceptsValidJWTToken(){
+    public function testServiceReturnsValidJWTTokenDecoded(){
         $key = $key = $this->container->getParameter('secret');
         $token = $this->createValidJWT($key);
 
         $service = $this->container->get('marcoalbarelli.jwt_checker');
 
-        $this->assertTrue($service->decodeToken($token));
+        $decoded = $service->decodeToken($token);
+
+        $this->assertNotNull($decoded);
+        $this->assertTrue(is_object($decoded)); //No point in testing further an external library
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testServiceThrowsExceptionForInvalidJWTToken(){
+        $key = $key = $this->container->getParameter('secret');
+        $token = $this->createInvalidJWT($key);
+
+        $service = $this->container->get('marcoalbarelli.jwt_checker');
+
+        $service->decodeToken($token);
     }
 
 }

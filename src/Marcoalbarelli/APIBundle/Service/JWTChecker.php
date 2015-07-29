@@ -19,17 +19,14 @@ class JWTChecker
      */
     private $algs;
 
-    public function __construct($secret,$algs){
+    public function __construct($secret, $algs)
+    {
         $this->secret = $secret;
         $this->algs = $algs;
     }
 
-    public function decodeToken($token){
-        try{
-            $decodedToken = JWT::decode($token,$this->secret,$this->algs);
-            return true;
-        } catch (\Exception $e){
-            return false;
-        }
+    public function decodeToken($token)
+    {
+        return JWT::decode($token, $this->secret, $this->algs);
     }
 }
