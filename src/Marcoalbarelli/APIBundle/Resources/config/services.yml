@@ -6,6 +6,9 @@ services:
         - "%jwt_algs%"
   marcoalbarelli.api_user_authenticator:
       class: Marcoalbarelli\APIBundle\Service\APIUserAuthenticator
+      arguments:
+        - @marcoalbarelli.api_user_provider
+        - @marcoalbarelli.jwt_checker
   marcoalbarelli.api_user_provider:
       class: Marcoalbarelli\APIBundle\Service\APIUserProvider
   marcoalbarelli.api_user_auth_entrypoint:

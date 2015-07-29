@@ -4,10 +4,12 @@
 namespace Marcoalbarelli\APIBundle\Service;
 
 
+use Marcoalbarelli\EntityBundle\Entity\User;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 
-class APIUserProvider implements UserProviderInterface
+class APIUserProvider implements APIUserProviderInterface
 {
     public function loadUserByUsername($username)
     {
@@ -16,13 +18,22 @@ class APIUserProvider implements UserProviderInterface
 
     public function refreshUser(UserInterface $user)
     {
-        // TODO: Implement refreshUser() method.
-        return $user;
+        throw new UnsupportedUserException();
     }
 
     public function supportsClass($class)
     {
         return $class === 'Marcoalbarelli\EntityBundle\Entity\User';
+    }
+
+    /**
+     * @param string $apiKey
+     * @return User|null
+     */
+    public function findUserByAPIKey($apiKey)
+    {
+        //TODO: test and implement
+        return null;
     }
 
 }
