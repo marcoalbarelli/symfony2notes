@@ -11,6 +11,8 @@ use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 
 class APIUserAuthenticatorTest extends BaseTestClass
 {
+
+
     public function testServiceExists(){
         $this->container->get('marcoalbarelli.api_user_authenticator');
     }
@@ -61,15 +63,43 @@ class APIUserAuthenticatorTest extends BaseTestClass
 
     /**
      * @expectedException \Exception
+     * @dataProvider invalidRequestsProvider
      */
-    public function testAuthenticatorThrowsExceptionIfRequestIsInvalid(){
-        $jwt = $this->createInvalidJWT($this->container->getParameter('secret'));
+    public function testAuthenticatorThrowsExceptionIfRequestIsInvalid(Request $request,$exceptionName){
+        $this->setExpectedException($exceptionName);
+        $service = $this->container->get('marcoalbarelli.api_user_authenticator');
+        $service->createToken($request,'pippo');
+    }
+
+    public function invalidRequestsProvider(){
+        $out = array();
+
+        static::createClient();
+        $secret = static::$kernel->getContainer()->getParameter('secret');
+
+
+        $jwt = $this->createInvalidJWT($secret,'ROLE_USER',self::JWT_INVALID_BECAUSE_MISSING_API_KEY);
         $request = new Request();
         $request->headers->add(array('Authorization'=> Constants::JWT_BEARER_PREFIX .$jwt));
+        $out[] = array($request,'Symfony\Component\Security\Core\Exception\BadCredentialsException');
 
-        $service = $this->container->get('marcoalbarelli.api_user_authenticator');
+        $jwt = $this->createInvalidJWT($secret,'ROLE_USER',self::JWT_INVALID_BECAUSE_MISSING_BEARER_PREFIX);
+        $request = new Request();
+        $request->headers->add(array('Authorization'=> Constants::JWT_BEARER_PREFIX .$jwt));
+        $out[] = array($request,'Symfony\Component\Security\Core\Exception\UsernameNotFoundException');
 
-        $service->createToken($request,'pippo');
+        $jwt = $this->createInvalidJWT($secret,'ROLE_USER',self::JWT_INVALID_BECAUSE_WRONG_API_KEY);
+        $request = new Request();
+        $request->headers->add(array('Authorization'=> Constants::JWT_BEARER_PREFIX .$jwt));
+        $out[] = array($request,'Symfony\Component\Security\Core\Exception\UsernameNotFoundException');
+
+        $jwt = $this->createInvalidJWT($secret,'ROLE_USER',self::JWT_INVALID_BECAUSE_BEFORE_VALID);
+        $request = new Request();
+        $request->headers->add(array('Authorization'=> Constants::JWT_BEARER_PREFIX .$jwt));
+        $out[] = array($request,'Firebase\JWT\BeforeValidException');
+
+        return $out;
+
     }
 
     /**

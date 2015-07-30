@@ -15,6 +15,10 @@ use Symfony\Component\Finder\Finder;
 
 class BaseTestClass   extends WebTestCase
 {
+    const JWT_INVALID_BECAUSE_MISSING_API_KEY = "missingApiKey";
+    const JWT_INVALID_BECAUSE_WRONG_API_KEY = "wrongApiKey";
+    const JWT_INVALID_BECAUSE_MISSING_BEARER_PREFIX = "missingBearerPrefix";
+    const JWT_INVALID_BECAUSE_BEFORE_VALID = 'beforeValid';
 
     /**
      * @var ContainerInterface $container
@@ -56,19 +60,59 @@ class BaseTestClass   extends WebTestCase
         return JWT::encode($token,$key);
     }
 
-    public function createInvalidJWT($key,$role = 'ROLE_USER')
+    public function createInvalidJWT($key,$role = 'ROLE_USER',$reason)
     {
+        $token = array();
+        switch($reason){
+            case self::JWT_INVALID_BECAUSE_MISSING_API_KEY:
+                $now = new \DateTime('now');
+                $role = 'ROLE_USER';
+                $token = array(
+                    "iss" => "http://example.org",
+                    "aud" => "http://example.com",
+                    "iat" => $now->getTimestamp(),
+                    "nbf" => $now->sub(new \DateInterval('P1D'))->getTimestamp(),
+                    "role" => $role
+                );
+                break;
+            case self::JWT_INVALID_BECAUSE_WRONG_API_KEY:
+                $now = new \DateTime('now');
+                $role = 'ROLE_USER';
+                $token = array(
+                    "iss" => "http://example.org",
+                    "aud" => "http://example.com",
+                    "iat" => $now->getTimestamp(),
+                    "nbf" => $now->sub(new \DateInterval('P1D'))->getTimestamp(),
+                    "role" => $role,
+                    Constants::JWT_APIKEY_PARAMETER_NAME => Constants::JWT_BEARER_PREFIX."aaaa"
+                );
+                break;
+            case self::JWT_INVALID_BECAUSE_MISSING_BEARER_PREFIX:
+                $now = new \DateTime('now');
+                $role = 'ROLE_USER';
+                $token = array(
+                    "iss" => "http://example.org",
+                    "aud" => "http://example.com",
+                    "iat" => $now->getTimestamp(),
+                    "nbf" => $now->sub(new \DateInterval('P1D'))->getTimestamp(),
+                    "role" => $role,
+                    Constants::JWT_APIKEY_PARAMETER_NAME => "aaaa"
+                );
+                break;
+            case self::JWT_INVALID_BECAUSE_BEFORE_VALID:
+                $now = new \DateTime('now');
+                $role = 'ROLE_USER';
+                $token = array(
+                    "iss" => "http://example.org",
+                    "aud" => "http://example.com",
+                    "iat" => $now->getTimestamp(),
+                    "nbf" => $now->add(new \DateInterval('P1D'))->getTimestamp(),
+                    "role" => $role,
+                    Constants::JWT_APIKEY_PARAMETER_NAME => Constants::JWT_BEARER_PREFIX."aaaa"
+                );
+                break;
+        }
 
-        $now = new \DateTime('now');
-        $role = 'ROLE_USER';
-        //Missing apikey and valid since tomorrow
-        $token = array(
-            "iss" => "http://example.org",
-            "aud" => "http://example.com",
-            "iat" => $now->getTimestamp(),
-            "nbf" => $now->add(new \DateInterval('P1D'))->getTimestamp(),
-            "role" => $role
-        );
         return JWT::encode($token,$key);
     }
 
