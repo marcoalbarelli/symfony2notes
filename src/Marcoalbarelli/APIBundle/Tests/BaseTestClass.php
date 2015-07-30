@@ -4,6 +4,7 @@
 namespace Marcoalbarelli\APIBundle\Tests;
 
 
+use Doctrine\ORM\EntityManagerInterface;
 use Firebase\JWT\JWT;
 use Marcoalbarelli\APIBundle\Constants;
 use Marcoalbarelli\EntityBundle\Entity\User;
@@ -35,18 +36,22 @@ class BaseTestClass   extends WebTestCase
      * @param string $role
      * @return mixed
      */
-    public function createValidJWT($key,$role = 'ROLE_USER')
+    public function createValidJWT($key,$role = 'ROLE_USER',$apiKey = null)
     {
 
         $now = new \DateTime('now');
         $role = 'ROLE_USER';
+        if($apiKey == null){
+            $apiKey = md5(rand(0,10));
+        }
+
         $token = array(
             "iss" => "http://example.org",
             "aud" => "http://example.com",
             "iat" => $now->getTimestamp(),
             "nbf" => $now->sub(new \DateInterval('P1D'))->getTimestamp(),
             "role" => $role,
-            Constants::JWT_APIKEY_PARAMETER_NAME => md5(rand(0,10))
+            Constants::JWT_APIKEY_PARAMETER_NAME => $apiKey
         );
         return JWT::encode($token,$key);
     }
@@ -133,4 +138,22 @@ class BaseTestClass   extends WebTestCase
 
         return $class;
     }
+
+    protected function truncateDB(EntityManagerInterface $em)
+    {
+        $bundle = 'MarcoalbarelliEntityBundle';
+        $entities = [
+            'User',
+        ];
+
+        foreach ($entities as $entity) {
+            $em->createQuery(
+                'DELETE ' .
+                'FROM ' . $bundle . ':' . $entity
+            )->execute();
+        }
+
+    }
+
+
 }

@@ -11,6 +11,8 @@ services:
         - @marcoalbarelli.jwt_checker
   marcoalbarelli.api_user_provider:
       class: Marcoalbarelli\APIBundle\Service\APIUserProvider
+      arguments:
+        - @doctrine.orm.entity_manager
   marcoalbarelli.api_user_auth_entrypoint:
       class: Marcoalbarelli\APIBundle\Service\APIAuthEntrypoint
       arguments:

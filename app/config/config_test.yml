@@ -15,6 +15,11 @@ web_profiler:
 swiftmailer:
     disable_delivery: true
 
+doctrine:
+    dbal:
+        driver:   pdo_pgsql
+        dbname:   "%database_name%_test"
+
 security:
     providers:
         in_memory_provider:

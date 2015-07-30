@@ -18,6 +18,9 @@ parameters:
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
 
+    #Should we use mocks for testing or not
+    useMocksForTesting: true
+
     # An array of algorithms for signing the JWTs
     jwt_algs:
       - HS256
