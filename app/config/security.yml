@@ -16,8 +16,9 @@ security:
             chain:
                 providers:          [ in_memory_provider , fos_userbundle ]
         api_chain_provider:
-            chain:
-                providers:          [ in_memory_provider , mapi ]
+            id: marcoalbarelli.api_user_provider
+            #chain:
+            #    providers:          [ in_memory_provider , mapi ]
 
     firewalls:
         dev:

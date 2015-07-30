@@ -4,14 +4,14 @@
 namespace Marcoalbarelli\APIBundle\Service;
 
 
-use Marcoalbarelli\EntityBundle\Entity\User;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 interface APIUserProviderInterface extends UserProviderInterface
 {
     /**
      * @param string $apiKey
-     * @return User|null
+     * @return UserInterface
      */
     public function findUserByAPIKey($apiKey);
 

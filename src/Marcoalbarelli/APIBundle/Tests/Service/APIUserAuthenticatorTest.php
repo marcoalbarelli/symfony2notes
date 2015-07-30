@@ -6,6 +6,7 @@ use Marcoalbarelli\APIBundle\Constants;
 use Marcoalbarelli\APIBundle\Tests\BaseTestClass;
 use Marcoalbarelli\EntityBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
 class APIUserAuthenticatorTest extends BaseTestClass
 {
@@ -19,11 +20,13 @@ class APIUserAuthenticatorTest extends BaseTestClass
     }
 
     public function testAuthenticatorCreatesTokenForValidJWT(){
-        $this->markTestIncomplete('the actual token still needs work to be provided');
+        $this->container->set('marcoalbarelli.api_user_provider',$this->getMockedUserProvider());
         $jwt = $this->createValidJWT($this->container->getParameter('secret'));
         $service = $this->container->get('marcoalbarelli.api_user_authenticator');
-        $token = $service->createToken(new Request(),'pippo');
-
+        $request = new Request();
+        $request->headers->add(array('Authorization'=>Constants::JWT_BEARER_PREFIX.$jwt));
+        $token = $service->createToken($request,'pippo');
+        $this->assertNotNull($token);
     }
 
     public function testAuthenticatorCreatesValidTokenIfRequestIsValid(){
@@ -40,7 +43,18 @@ class APIUserAuthenticatorTest extends BaseTestClass
 
     }
 
+    /**
+     * @expectedException \Exception
+     */
     public function testAuthenticatorThrowsExceptionIfRequestIsInvalid(){
-        $this->markTestIncomplete("TODO");
+        $jwt = $this->createInvalidJWT($this->container->getParameter('secret'));
+        $request = new Request();
+        $request->headers->add(array('Authorization'=> Constants::JWT_BEARER_PREFIX .$jwt));
+
+        $service = $this->container->get('marcoalbarelli.api_user_authenticator');
+
+        $preauthenticatedToken = $service->createToken($request,'pippo');
+        $this->assertNotNull($preauthenticatedToken);
+        $this->assertEquals($preauthenticatedToken->getCredentials(),$jwt);
     }
 }

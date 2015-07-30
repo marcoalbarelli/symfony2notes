@@ -7,6 +7,7 @@ namespace Marcoalbarelli\APIBundle\Tests;
 use Firebase\JWT\JWT;
 use Marcoalbarelli\APIBundle\Constants;
 use Marcoalbarelli\EntityBundle\Entity\User;
+use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Finder\Finder;
@@ -19,10 +20,14 @@ class BaseTestClass   extends WebTestCase
      */
     protected $container;
 
+    /**
+     * @var Client
+     */
+    protected $client;
+
     public function setUp(){
-        $kernel = self::createKernel();
-        $kernel->boot();
-        $this->container = $kernel->getContainer();
+        $this->client = static::createClient();
+        $this->container = static::$kernel->getContainer();
     }
 
     /**
@@ -62,14 +67,40 @@ class BaseTestClass   extends WebTestCase
         return JWT::encode($token,$key);
     }
 
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    public function getMockedFOSUserManager()
+    {
+        $mockedUM = $this->getMockBuilder('FOS\UserBundle\Model\UserManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mockedUM->
+        expects($this->atLeastOnce())->
+        method('updateUser');
+        return $mockedUM;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     protected function getMockedUserProvider(){
         $mockedUserProvider = $this->getMockBuilder('Marcoalbarelli\APIBundle\Service\APIUserProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
+        $mockedUser = new User();
+        $mockedUser->
+            addRole('ROLE_USER')->
+            setUsername('mocked')->
+            setEmail('mocked@mocked.mo')->
+            setEnabled(true)->
+            setPlainPassword('mocked')
+        ;
+
         $mockedUserProvider->expects($this->once())->
         method('findUserByAPIKey')->
-        will($this->returnValue(new User()))
+        will($this->returnValue($mockedUser))
         ;
         return $mockedUserProvider;
     }

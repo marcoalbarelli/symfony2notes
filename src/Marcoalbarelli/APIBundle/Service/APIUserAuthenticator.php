@@ -35,12 +35,12 @@ class APIUserAuthenticator implements SimplePreAuthenticatorInterface, Authentic
 
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
-
+        return $token; //no checks for now
     }
 
     public function supportsToken(TokenInterface $token, $providerKey)
     {
-        // TODO: Implement supportsToken() method.
+        return $token instanceof PreAuthenticatedToken && $token->getProviderKey() === $providerKey;
     }
 
     public function createToken(Request $request, $providerKey)
@@ -79,7 +79,6 @@ class APIUserAuthenticator implements SimplePreAuthenticatorInterface, Authentic
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         return new Response('fail',401);
-        // TODO: Implement onAuthenticationFailure() method.
     }
 
 
