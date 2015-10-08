@@ -55,7 +55,13 @@ class APIUserAuthenticator implements SimplePreAuthenticatorInterface, Authentic
         }
         $encodedJWT = $authorizationHeader[1];
         $apiKeyName = Constants::JWT_APIKEY_PARAMETER_NAME;
-        $jwt = $this->jwtCheckerService->decodeToken($encodedJWT);
+
+        try {
+            $jwt = $this->jwtCheckerService->decodeToken($encodedJWT);
+        } catch (\Exception $exception){
+            throw new AuthenticationException($exception->getMessage());
+        }
+
         if( !isset($jwt->$apiKeyName)){
             throw new BadCredentialsException('Invalid JWT');
         }

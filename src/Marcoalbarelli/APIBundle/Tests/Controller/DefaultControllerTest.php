@@ -55,15 +55,38 @@ class DefaultControllerTest extends BaseTestClass
         $this->assertEquals(200,$this->client->getResponse()->getStatusCode());
     }
 
+    /**
+     * @param $method
+     * @param $route
+     * @param $params
+     * @dataProvider apiEndpointsProvider
+     */
+    public function testApiEndpointsAreInaccessibleWithAnInvalidJWTAuthorizationHeader($method,$route,$params){
+        $this->setUpMocksWithNoExpectationsOnCalls();
+        $router = $this->container->get('router');
+        $uri = $router->generate($route,$params);
+
+        $this->client->setServerParameter('HTTP_Authorization','Bearer '.$this->createInvalidJWT($this->container->getParameter('secret')));
+        $this->client->request($method,$uri,$params);
+        $this->assertEquals(401,$this->client->getResponse()->getStatusCode());
+    }
+
     public function apiEndpointsProvider(){
         $out = [];
         $out[] = array('GET', 'api_hello', array('name'=>'Pippo'));
         return $out;
     }
 
+    public function setUpMocksWithNoExpectationsOnCalls(){
+        $mockedApiUserProvider = $this->getMockedUserProvider(0);
+        static::$kernel->setKernelModifier(function ($kernel) use ($mockedApiUserProvider) {
+            $kernel->getContainer()->set('marcoalbarelli.api_user_provider', $mockedApiUserProvider);
+        });
+    }
+    
     public function setupMocks()
     {
-        $mockedApiUserProvider = $this->getMockedUserProvider();
+        $mockedApiUserProvider = $this->getMockedUserProvider(1);
         $mockedUM = $this->getMockedFOSUserManager();
 
         static::$kernel->setKernelModifier(function ($kernel) use ($mockedApiUserProvider, $mockedUM) {
