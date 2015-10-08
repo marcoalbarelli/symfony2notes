@@ -89,7 +89,7 @@ class BaseTestClass   extends WebTestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getMockedUserProvider(){
+    protected function getMockedUserProvider($timesCalled = 1){
         $mockedUserProvider = $this->getMockBuilder('Marcoalbarelli\APIBundle\Service\APIUserProvider')
             ->disableOriginalConstructor()
             ->getMock();
@@ -103,7 +103,7 @@ class BaseTestClass   extends WebTestCase
             setPlainPassword('mocked')
         ;
 
-        $mockedUserProvider->expects($this->once())->
+        $mockedUserProvider->expects($this->exactly($timesCalled))->
         method('findUserByAPIKey')->
         will($this->returnValue($mockedUser))
         ;
